@@ -25,12 +25,21 @@ CREATE TABLE "public"."project_members" (
 CREATE TABLE "public"."tasks" (
   "id" serial PRIMARY KEY,
   "project_id" integer NOT NULL,
+<<<<<<< HEAD
   "key" varchar,
   "title" varchar NOT NULL,
   "description" text,
   "task_type_id" integer NOT NULL,
   "parameters" json,
   "results" json,
+=======
+  "key" UUID NOT NULL DEFAULT gen_random_uuid(),
+  "title" varchar NOT NULL,
+  "description" text,
+  "task_type_id" integer,
+  "parameters" json,
+  "output" json,
+>>>>>>> secure-api
   "created_at" TIMESTAMP DEFAULT NOW(),
   "started_at" timestamp,
   "finished_at" timestamp
@@ -38,9 +47,20 @@ CREATE TABLE "public"."tasks" (
 
 CREATE TABLE "public"."task_types" (
   "id" serial PRIMARY KEY,
-  "title" varchar,
+  "title" varchar NOT NULL,
+  "slug" varchar NOT NULL,
   "created_at" TIMESTAMP DEFAULT NOW()
 );
+
+CREATE TABLE IF NOT EXISTS public.task_types
+(
+    id integer NOT NULL DEFAULT nextval('task_types_id_seq'::regclass),
+    title character varying COLLATE pg_catalog."default",
+    created_at timestamp without time zone DEFAULT now(),
+    slug text COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT task_types_pkey PRIMARY KEY (id)
+);
+
 
 COMMENT ON COLUMN "public"."projects"."description" IS 'Description of the project';
 
