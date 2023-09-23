@@ -25,21 +25,12 @@ CREATE TABLE "public"."project_members" (
 CREATE TABLE "public"."tasks" (
   "id" serial PRIMARY KEY,
   "project_id" integer NOT NULL,
-<<<<<<< HEAD
-  "key" varchar,
-  "title" varchar NOT NULL,
-  "description" text,
-  "task_type_id" integer NOT NULL,
-  "parameters" json,
-  "results" json,
-=======
   "key" UUID NOT NULL DEFAULT gen_random_uuid(),
   "title" varchar NOT NULL,
   "description" text,
   "task_type_id" integer,
   "parameters" json,
   "output" json,
->>>>>>> secure-api
   "created_at" TIMESTAMP DEFAULT NOW(),
   "started_at" timestamp,
   "finished_at" timestamp
