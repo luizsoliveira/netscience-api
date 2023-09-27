@@ -1,9 +1,8 @@
 CREATE OR REPLACE FUNCTION public.catch_task(taskType text)
 RETURNS TABLE (
-    id integer,
+    id uuid,
     --project_id integer,
-    key uuid,
-	title character,
+    title character,
 	parameters json,
 	created_at timestamp,
 	started_at timestamp
@@ -20,5 +19,5 @@ RETURNS TABLE (
                 LIMIT  1
                 FOR UPDATE SKIP LOCKED
                 )
-    RETURNING id, key, title, parameters, created_at, started_at;
+    RETURNING id, title, parameters, created_at, started_at;
 $$ LANGUAGE SQL;

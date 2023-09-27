@@ -23,9 +23,8 @@ CREATE TABLE "public"."project_members" (
 );
 
 CREATE TABLE "public"."tasks" (
-  "id" serial PRIMARY KEY,
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   "project_id" integer NOT NULL,
-  "key" UUID NOT NULL DEFAULT gen_random_uuid(),
   "title" varchar NOT NULL,
   "description" text,
   "task_type_id" integer,
