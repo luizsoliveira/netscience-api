@@ -14,7 +14,7 @@ CREATE TYPE basic_auth.jwt_token AS (
 
 -- login should be on your exposed schema
 create or replace function
-login(email text, pass text) returns basic_auth.jwt_token as $$
+public.login(email text, pass text) returns basic_auth.jwt_token as $$
 declare
   _role name;
   result basic_auth.jwt_token;
@@ -37,5 +37,5 @@ begin
 end;
 $$ language plpgsql security definer;
 
-grant execute on function login(text,text) to api_anon_user;
+grant execute on function public.login(text,text) to api_anon_user;
 

@@ -1,20 +1,16 @@
-INSERT INTO basic_auth.users(
+INSERT INTO secure.users(
 	first_name, last_name, email, pass, role)
 	VALUES ('Luiz', 'Oliveira', 'luizsoliveira@gmail.com', '123456', 'app_user');
 
-INSERT INTO public.task_types(
+INSERT INTO secure.task_types(
 	title, slug)
 	VALUES ('BGP anomaly', 'BGPAnomaly');
 
-INSERT INTO public.users(
-	first_name, last_name, email)
-	VALUES ('Luiz', 'Oliveira', 'luizsoliveira@gmail.com');
-
-INSERT INTO public.projects(
+INSERT INTO secure.projects(
 	title, manager_user_id)
 	VALUES ('CyberDefense', 1);
 
-INSERT INTO public.tasks(
+INSERT INTO secure.tasks(
 	project_id, title, description, task_type_id, parameters)
 	VALUES (1,
 			'Event 1',

@@ -1,13 +1,16 @@
-CREATE TABLE "public"."users" (
+CREATE schema secure;
+
+CREATE TABLE "secure"."users" (
   "id" serial PRIMARY KEY,
   "first_name" varchar NOT NULL,
   "last_name" varchar NOT NULL,
-  "email" varchar NOT NULL,
-  "password" varchar,
+  "email" text UNIQUE check ( email ~* '^.+@.+\..+$' ),
+  "pass" text not null check (length(pass) < 512),
+  "role" name not null check (length(role) < 512),
   "created_at" TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE "public"."projects" (
+CREATE TABLE "secure"."projects" (
   "id" serial PRIMARY KEY,
   "title" varchar NOT NULL,
   "description" text,
@@ -15,14 +18,14 @@ CREATE TABLE "public"."projects" (
   "created_at" TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE "public"."project_members" (
+CREATE TABLE "secure"."project_members" (
   "id" serial PRIMARY KEY,
   "user_id" integer NOT NULL,
   "project_id" integer NOT NULL,
   "created_at" TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE "public"."tasks" (
+CREATE TABLE "secure"."tasks" (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   "project_id" integer NOT NULL,
   "title" varchar NOT NULL,
@@ -35,14 +38,14 @@ CREATE TABLE "public"."tasks" (
   "finished_at" timestamp
 );
 
-CREATE TABLE "public"."task_types" (
+CREATE TABLE "secure"."task_types" (
   "id" serial PRIMARY KEY,
   "title" varchar NOT NULL,
   "slug" varchar NOT NULL,
   "created_at" TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS public.task_types
+CREATE TABLE IF NOT EXISTS secure.task_types
 (
     id integer NOT NULL DEFAULT nextval('task_types_id_seq'::regclass),
     title character varying COLLATE pg_catalog."default",
@@ -52,38 +55,39 @@ CREATE TABLE IF NOT EXISTS public.task_types
 );
 
 
-COMMENT ON COLUMN "public"."projects"."description" IS 'Description of the project';
+COMMENT ON COLUMN "secure"."projects"."description" IS 'Description of the project';
 
-COMMENT ON COLUMN "public"."tasks"."description" IS 'Description of the task';
+COMMENT ON COLUMN "secure"."tasks"."description" IS 'Description of the task';
 
-ALTER TABLE "public"."project_members" ADD CONSTRAINT project_members_user_id_fkey FOREIGN KEY (user_id)
-        REFERENCES public.users (id) MATCH SIMPLE
+ALTER TABLE "secure"."project_members" ADD CONSTRAINT project_members_user_id_fkey FOREIGN KEY (user_id)
+        REFERENCES secure.users (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE CASCADE;
 
-ALTER TABLE "public"."project_members" ADD CONSTRAINT project_members_project_id_fkey FOREIGN KEY (project_id)
-        REFERENCES public.projects (id) MATCH SIMPLE
+ALTER TABLE "secure"."project_members" ADD CONSTRAINT project_members_project_id_fkey FOREIGN KEY (project_id)
+        REFERENCES secure.projects (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE CASCADE;
 
-ALTER TABLE "public"."projects" ADD CONSTRAINT projects_manager_user_id_fkey FOREIGN KEY (manager_user_id)
-        REFERENCES public.users (id) MATCH SIMPLE
+ALTER TABLE "secure"."projects" ADD CONSTRAINT projects_manager_user_id_fkey FOREIGN KEY (manager_user_id)
+        REFERENCES secure.users (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE SET NULL;
 
-ALTER TABLE "public"."tasks" ADD CONSTRAINT tasks_project_id_fkey FOREIGN KEY (project_id)
-        REFERENCES public.projects (id) MATCH SIMPLE
+ALTER TABLE "secure"."tasks" ADD CONSTRAINT tasks_project_id_fkey FOREIGN KEY (project_id)
+        REFERENCES secure.projects (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE CASCADE;
 
-ALTER TABLE "public"."tasks" ADD FOREIGN KEY ("task_type_id") REFERENCES "public"."task_types" ("id");
+ALTER TABLE "secure"."tasks" ADD FOREIGN KEY ("task_type_id") REFERENCES "secure"."task_types" ("id");
 
-ALTER TABLE "public"."project_members" ADD CONSTRAINT project_members_user_project_unique UNIQUE (user_id, project_id);
+ALTER TABLE "secure"."project_members" ADD CONSTRAINT project_members_user_project_unique UNIQUE (user_id, project_id);
 
-GRANT ALL ON TABLE public.users TO api_anon_user;
-GRANT ALL ON TABLE public.projects TO api_anon_user;
-GRANT ALL ON TABLE public.project_members TO api_anon_user;
-GRANT ALL ON TABLE public.tasks TO api_anon_user;
-GRANT ALL ON TABLE public.task_types TO api_anon_user;
 
-GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO api_anon_user;
+-- Giving access only for the authenticated users
+GRANT ALL ON TABLE secure.users TO secure_user;
+GRANT ALL ON TABLE secure.projects TO secure_user;
+GRANT ALL ON TABLE secure.project_members TO secure_user;
+GRANT ALL ON TABLE secure.tasks TO secure_user;
+GRANT ALL ON TABLE secure.task_types TO secure_user;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA secure TO secure_user;

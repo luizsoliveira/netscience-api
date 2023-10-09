@@ -1,21 +1,11 @@
 -- SQL statements based on PostgREST documentation
--- aivailable at: https://postgrest.org/en/stable/how-tos/sql-user-management.html#sql-user-management
+-- available at: https://postgrest.org/en/stable/how-tos/sql-user-management.html#sql-user-management
 
 -- We put things inside the basic_auth schema to hide
 -- them from public view. Certain public procs/views will
 -- refer to helpers and tables inside.
 
 create schema if not exists basic_auth;
-
-create table if not exists
-basic_auth.users (
-  id serial PRIMARY KEY,
-  first_name varchar NOT NULL,
-  last_name varchar NOT NULL,
-  email    text UNIQUE check ( email ~* '^.+@.+\..+$' ),
-  pass     text not null check (length(pass) < 512),
-  role     name not null check (length(role) < 512)
-);
 
 -- We would like the role to be a foreign key to actual database roles.
 -- However PostgreSQL does not support these constraints against the pg_roles table. We’ll use a trigger to manually enforce it.
@@ -32,9 +22,9 @@ begin
 end
 $$ language plpgsql;
 
-drop trigger if exists ensure_user_role_exists on basic_auth.users;
+drop trigger if exists ensure_user_role_exists on secure.users;
 create constraint trigger ensure_user_role_exists
-  after insert or update on basic_auth.users
+  after insert or update on secure.users
   for each row
   execute procedure basic_auth.check_role_exists();
 
@@ -53,9 +43,9 @@ begin
 end
 $$ language plpgsql;
 
-drop trigger if exists encrypt_pass on basic_auth.users;
+drop trigger if exists encrypt_pass on secure.users;
 create trigger encrypt_pass
-  before insert or update on basic_auth.users
+  before insert or update on secure.users
   for each row
   execute procedure basic_auth.encrypt_pass();
 
@@ -68,9 +58,9 @@ basic_auth.user_role(email text, pass text) returns name
   as $$
 begin
   return (
-  select role from basic_auth.users
-   where users.email = user_role.email
-     and users.pass = crypt(user_role.pass, users.pass)
+  select role from secure.users su
+   where su.email = user_role.email
+     and su.pass = crypt(user_role.pass, su.pass)
   );
 end;
 $$;
