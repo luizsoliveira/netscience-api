@@ -85,9 +85,9 @@ ALTER TABLE "secure"."project_members" ADD CONSTRAINT project_members_user_proje
 
 
 -- Giving access only for the authenticated users
-GRANT ALL ON TABLE secure.users TO secure_user;
-GRANT ALL ON TABLE secure.projects TO secure_user;
-GRANT ALL ON TABLE secure.project_members TO secure_user;
-GRANT ALL ON TABLE secure.tasks TO secure_user;
-GRANT ALL ON TABLE secure.task_types TO secure_user;
-GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA secure TO secure_user;
+GRANT ALL ON TABLE secure.users TO app_user;
+GRANT ALL ON TABLE secure.projects TO app_user;
+GRANT ALL ON TABLE secure.project_members TO app_user;
+GRANT ALL ON TABLE secure.tasks TO app_user;
+GRANT ALL ON TABLE secure.task_types TO app_user;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA secure TO app_user;
