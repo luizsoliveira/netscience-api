@@ -33,6 +33,7 @@ CREATE TABLE "secure"."tasks" (
   "task_type_id" integer,
   "parameters" json,
   "output" json,
+  "return_code" integer,
   "created_at" TIMESTAMP DEFAULT NOW(),
   "started_at" timestamp,
   "finished_at" timestamp
