@@ -1,3 +1,6 @@
+ALTER DATABASE app_db
+SET TIMEZONE TO 'America/Vancouver';
+
 -- These triggers watch for CREATE and ALTER sentences and reload
 -- automatically the PostgREST schema cache keeping the REST endpoints
 -- always updated.
