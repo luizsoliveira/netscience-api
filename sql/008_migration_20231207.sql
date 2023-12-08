@@ -49,3 +49,5 @@ WITH moved_rows AS (
 )
 INSERT INTO secure.datasets
 SELECT * FROM moved_rows;
+
+DROP table secure.tasks_tmp;
